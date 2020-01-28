@@ -11,7 +11,32 @@ import '../css/site.css'
 import '../css/material-icons.css'
 import * as UiCommon from './ui/common.js'
 import * as Common from './common.js'
-import './ui/menu.js'
+
+
+function activate(parameters, on_always, on_done, on_error) {
+        $.post("/rest/activate", parameters)
+            .done(on_done)
+            .fail(on_error)
+            .always(on_always);
+}
+
+function activate_custom_domain(parameters, on_always, on_done, on_error) {
+    $.post("/rest/activate_custom_domain", parameters)
+            .done(on_done)
+            .fail(on_error)
+            .always(on_always);
+}
+
+function login() {
+        var url = (new URI())
+                .protocol('https')
+                .port(443)
+                .filename("")
+                .query("");
+
+        window.location.href = url;
+}
+
 
 $(document).ready(function () {
 
@@ -26,6 +51,10 @@ $(document).ready(function () {
 				event.preventDefault();
 				$("#domain_type").val('custom');
 		});
+
+    $("#btn_error_send_logs").on('click', function () {
+        window.location.href = "sendlogs.html";
+    });
 
 		$("#form_activate").submit(function (event) {
 				event.preventDefault();
@@ -43,13 +72,13 @@ $(document).ready(function () {
 				};
 
    				if ( $("#domain_type").val() == 'syncloud') {
-					backend.activate(
+					activate(
 						values,
 						on_always,
 						backend.login,
 						ui_display_error);
 				} else {
-					backend.activate_custom_domain(
+					activate_custom_domain(
 						values,
 						on_always,
 						backend.login,
